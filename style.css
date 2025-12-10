@@ -100,7 +100,7 @@ body {
 header, #content, footer { 
   background: linear-gradient(90deg, transparent, rgba(139, 105, 20, 0.2), transparent); 
   padding:25px;
-  color:#8b6914; 
+  color:#FFFFFF; 
 }
 iframe {
   max-width:100%;
