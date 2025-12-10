@@ -11,6 +11,7 @@ body {
   line-height: 1.6;
   font-weight: 400;
   font-family: "Georgia";
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   color: #e8e8e8;
 }
 
@@ -91,11 +92,7 @@ blockquote p:last-child {
  */
 
 /* Full size background image */
-html, #container, .inner { background-color:transparent;}
-html {
-  background:url(background.jpg) center center no-repeat fixed;
-  background-size:cover;
-}
+
 body {
   max-width:800px;
   margin:25px auto;
