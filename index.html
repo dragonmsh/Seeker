@@ -62,6 +62,22 @@
             font-style: italic;
             font-size: 1.05em;
         }
+
+      .list-auto {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+      .list-item {
+            padding: 8px;
+            background: rgba(139, 105, 20, 0.2);
+            border-left: 3px solid #8b6914;
+            font-size: 0.95em;
+        }
       
     </style>  
   </head>
@@ -92,9 +108,14 @@
           
           <div id="class" class="content-region hide">
             <h2>Class</h2>
-            <p>
-              This is a simple website template published with Github Pages. <a href="caster-class-sheet.html">Caster</a> to create your own site!
-            </p>
+            <div class="list-auto">
+              <div class="list-item"><a href="caster-class-sheet.html">Caster</a></div>
+              <div class="list-item"><a href="curator-class-sheet.html">Curator</a></div>
+              <div class="list-item"><a href="famist-class-sheet.html">Famist</a></div>
+              <div class="list-item"><a href="hunter-class-sheet.html">Hunter</a></div>
+              <div class="list-item"><a href="knight-class-sheet.html">Knight</a></div>
+              <div class="list-item"><a href="magi-class-sheet.html">Magi</a></div>
+            </div>
           </div>
           
           <div id="race" class="content-region hide">
