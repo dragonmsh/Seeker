@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Race Sheets</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e8e8e8;
+            padding: 20px;
+            line-height: 1.4;
+        }
+        
+        .race-selector {
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .race-button {
+            background: linear-gradient(to bottom, #2a2a3e 0%, #1f1f2e 100%);
+            border: 2px solid #8b6914;
+            color: #ffd700;
+            padding: 12px 24px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Georgia', serif;
+            transition: all 0.3s;
+        }
+        
+        .race-button:hover {
+            background: linear-gradient(to bottom, #3a3a4e 0%, #2f2f3e 100%);
+            border-color: #ffd700;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(139, 105, 20, 0.4);
+        }
+        
+        .race-button.active {
+            background: linear-gradient(90deg, #8b6914, #6d5411);
+            border-color: #ffd700;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: linear-gradient(to bottom, #2a2a3e 0%, #1f1f2e 100%);
+            border: 3px solid #8b6914;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 0 40px rgba(139, 105, 20, 0.3);
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #8b6914;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+            background: linear-gradient(90deg, transparent, rgba(139, 105, 20, 0.2), transparent);
+        }
+        
+        .race-name {
+            font-size: 3em;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+        
+        .race-size {
+            font-size: 1.3em;
+            color: #87ceeb;
+            letter-spacing: 2px;
+        }
+        
+        .description {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-left: 4px solid #8b6914;
+            margin: 20px 0;
+            font-style: italic;
+            font-size: 1.05em;
+            white-space: pre-wrap;
+        }
+        
+        .section {
+            margin: 25px 0;
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: #ffd700;
+            border-bottom: 2px solid #8b6914;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title::before {
+            content: "⚡";
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+        
+        .trait-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .trait {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #8b6914;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        
+        .trait-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .trait-name {
+            font-size: 1.3em;
+            color: #ffd700;
+            font-weight: bold;
+        }
+        
+        .trait-type {
+            background: #8b6914;
+            padding: 4px 12px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .trait-type.modification { background: #4169e1; }
+        .trait-type.ability { background: #900044; }
+        .trait-type.advantage { background: #030288; }
+        .trait-type.enhancement { background: #8d6650; }
+        .trait-type.disadvantage { background: #4c5539; }
+        .trait-type.negative { background: #dc143c; }
+        
+        .trait-description {
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        
+        .trait-effect {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(139, 105, 20, 0.2);
+            border-left: 3px solid #ffd700;
+            font-weight: bold;
+            color: #87ceeb;
+        }
+        
+        .stat-bonuses {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #8b6914;
+            padding: 15px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        
+        .stat-name {
+            font-size: 1.2em;
+            color: #ffd700;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            color: #87ceeb;
+            font-weight: bold;
+        }
+        
+        .stat-value.negative {
+            color: #ff6b6b;
+        }
+        
+        .stat-description {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #cccccc;
+        }
+        
+        @media (max-width: 768px) {
+            .race-name {
+                font-size: 2em;
+            }
+            
+            .race-selector {
+                gap: 5px;
+            }
+            
+            .race-button {
+                padding: 8px 16px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="race-selector" id="raceSelector"></div>
+    <div class="container" id="raceContainer"></div>
+
+    <script>
+        const races = {
+            HUMAN: {
+                name: "HUMAN",
+                size: "SMALL, MEDIUM, OR LARGE",
+                description: `VARIOUS SKIN TONED HUMANS WITH A MEASURABLE DIFFERENCE BETWEEN MEN AND WOMEN. THEY COME IN VARIOUS SIZES AND SHAPES, BUT ARE TYPICALLY BETWEEN 4'6 TO 6'6 AND WEIGH BETWEEN 80 LBS TO 250 LBS. VARIOUS HAIR COLORS FROM NATURAL FIERY HUES TO DARKER SHADOWY HUES. ORIGINATING FROM THE COUNCIL LANDS, THEIR SHARP TONGUES AND ADAPTIVE NATURES ALLOW THEM TO RESIDE ANYWHERE IN ESTERA WITHOUT MUCH STRIFE.
+
+(TYP. LIFE SPAN: 100 YEARS, ADULTHOOD: 20 YEARS)
+(TYP. HEIGHT: 4'6"-6'6")`,
+                traits: [
+                    {
+                        name: "ADAPTIVE",
+                        type: "MODIFICATION",
+                        description: "HUMANS LIVE EVERYWHERE. NO MATTER IF THE SUNSHINES OR NOT. NO MATTER IF THE AIR IS FIERY OR CHILLING. NO MATTER IF THE LAND IS THERE OR NOT. THE HUMANS AND THRIVE IN UNUSUAL ENVIRONMENTS AND LEARN THE LANDS WITH GREAT HONOR.",
+                        effect: "ADAPTABILITY SKILLS GAIN 1 TO MODIFIER"
+                    },
+                    {
+                        name: "QUICK-WITTED",
+                        type: "ADVANTAGE",
+                        description: "HUMANS HAVE BEEN ABLE TO GET OUT OF MANY STICKY SITUATIONS WITH THEIR QUICK-WITS AND SLY-TONGUES.",
+                        effect: "GAIN ADVANTAGE ON SPEECH CHECKS."
+                    },
+                    {
+                        name: "MAGIC OF THE HEART",
+                        type: "NEGATIVE",
+                        description: "HUMANS ARE NON-MAGICAL IN NATURE AND DON'T HAVE THE FORESIGHT TO SEE MAGIC IN THE LAND.",
+                        effect: "ARCANA SKILL LOSES 5 TO MODIFER."
+                    }
+                ],
+                attributes: [
+                    {
+                        name: "FINESSE",
+                        value: "+2",
+                        description: "IN THE HISTORY OF WARS, TWIN SWORDS WERE THE HUMANS' WEAPONS OF CHOICE. THEIR AMBIDEXTERITY ALLOWED AGILE AND GRACEFUL FIGHTING STYLES TO FLOURISH."
+                    },
+                    {
+                        name: "ADAPTABILITY",
+                        value: "+2",
+                        description: "HUMANS LIVE EVERYWEHRE AND AT ANY TIME. THEY HAVE SURROUNDED THEMSELVES OVER THE GENERATIONS AMONGST THE TREES, THE DESERTS, THE MOUNTAINS, THE OCEANS, AND THE GRASSLANDS."
+                    },
+                    {
+                        name: "ARCANE",
+                        value: "-2",
+                        description: "HUMANS CAN LEARN MAGIC BUT THEIR MAGIC CASTING ABILITY IS GREATLY DIMINISHED DUE THEIR LACK OF MAGICAL BLOOD."
+                    }
+                ]
+            },
+            ORC: {
+                name: "ORC",
+                size: "MEDIUM OR LARGE",
+                description: `THE FIERY SKINS TO THE NORTH. THE GRASSY SKINS TO THE SOUTH. AND THE GRAY SKINS TO THE WEST. ORCS ARE QUITE A VARIETY. SURSIUM AND NURSIUM, THE SOUTH LUNG AND THE NORTH LUNG RESPECTIVELY, ARE THE ORIGINS OF THE ORCS. ONCE THEY ARRIVED TO THE HEART, THEY INTERMINGLED INTO THE MODERN GRAY SKINS. TALL AND BEASTLY, THE ORCS ARE KNOWN FOR THEIR FEROCITY AND DISLIKE OF THE OTHER RACES. BUT THESE ARE JUST THE CLAN ORCS. THE COMMON ORCS FOUND THROUGHOUT THE LANDS HAVE ADAPTED TO SOCIETY AND HAVE QUELLED THEIR BLOODLUST WITH VARIOUS TALENTS AND HOBBIES. THEY'RE STILL TALL, STOIC, AND BEASTLY, TYPICALLY STANDING OVER 6'6" AND WEIGHING OVER 250 LBS, YET THEY REMAIN A COMMON RACE AMONGST THE OTHERS.
+
+(TYP. LIFE SPAN: 150 YEARS, ADULTHOOD: 15 YEARS)
+(TYP. HEIGHT: 6'0"-8'0")`,
+                traits: [
+                    {
+                        name: "STRONG LIKE BULL",
+                        type: "MODIFICATION",
+                        description: "ORCS ARE QUITE STRONG, SO STRONG IN FACT THEY CAN PICK UP A RAGING BULL AT MAX RAGING SPEED. THEY CAN EVEN HALT THE BULL. DON'T MESS THE ORCS. THEY KNOW A THING OR TWO ABOUT BULL FIGHTING.",
+                        effect: "STRENGTH SKILLS GAIN 1 TO MODIFIERS."
+                    },
+                    {
+                        name: "HIDDEN RAGE",
+                        type: "ABILITY",
+                        description: "ORCS ALWAYS HAVE THE ABILITY TO RAGE. ITS IN THEIR BLOOD.",
+                        effect: "GAIN BERZERK AND CRAZED ABILITIES."
+                    },
+                    {
+                        name: "NOT THE BRIGHTEST",
+                        type: "NEGATIVE",
+                        description: "ORCS ARE QUITE INTUITIVE. THEY HAVE MAGIC BLOOD. THEY'RE OBVIOUSLY VERY STRONG AND KNOW HOW TO MOVE. THEY'RE ALSO FOUND IN A CONSIDERABLE ASSORTMENT OF LANDS. BUT THEY AREN'T THE MOST INCLINED IN THE FIELD OF EDUCATION.",
+                        effect: "INTELLIGENCE SKILLS LOSE 1 TO MODIFIER"
+                    }
+                ],
+                attributes: [
+                    {
+                        name: "STRENGTH",
+                        value: "+2",
+                        description: "ORCS ARE KNOWN TO FIGHT QUITE HANDILY WHEN OUTNUMBERED. THEIR STRENGTH SHOWS THROUGH THE PERSEVEARANCE IN COMBAT."
+                    },
+                    {
+                        name: "FINESSE",
+                        value: "+2",
+                        description: "ORCS CAN TRAVEL GREAT DISTANCES AND DO SO QUITE QUICKLY, ESPECIALLY WHEN THEY'RE ON THE HUNT IN THE CRAZED STATES. THEY CAN LEAP OVER OBJECTS, VAULT TO GREAT LENGTHS AND HEIGHTS, AND CLIMB LIKE NO OTHER."
+                    },
+                    {
+                        name: "INTELLIGENCE",
+                        value: "-2",
+                        description: "ORCS AREN'T KNOWN FOR THEIR SMARTS AND THAT LIKELY WON'T CHANGE."
+                    }
+                ]
+            },
+            ELF: {
+                name: "ELF",
+                size: "MEDIUM OR LARGE",
+                description: `THEIR POINTED EARS, SILVERY GOLD HAIR, GOLDEN PUPILS, AND YELLOWED SKIN ALWAYS GIVE AWAY AN ELF. KNOWN FOR BEING QUITE TALL AND FOR THEIR HIGHLY POTENT MAGIC BLOOD, THE ELVES ARE THE MOST WELL-EDUCATED AND PAMPERED RACE IN ALL OF ESTERA. WELL UNTIL THE HEARTS AROSE AND DISMANTLED THEIR GREAT MULTICULTURAL, MULTIRACIAL SOCIETY. A SMALL BASTION OF ELVES LIVE OUTSIDE OF THE ANCIENT FOREST IN THE HEARTLANDS, BUT VERY FEW TRULY LEAVE THEIR HOVELED SOCIETY. A FEW DIASPORAS OF ELVES RESIDE WITHIN THE COUNCIL LANDS, STORMLANDS, AND THE ACKLANDS, SOME EVEN EXIST IN SURSIUM AND NURSIUM. THE DARK SKINNED ELVES ORIGINATE FROM NURSIUM, WHILE THE TAN SKINNED ELVES ORIGINATE FROM SURSIUM.
+
+(TYP. LIFE SPAN: 2000 YEARS, ADULTHOOD: 50 YEARS)
+(TYP. HEIGHT: 5'0"-7'0")`,
+                traits: [
+                    {
+                        name: "ARCANIC BLOOD",
+                        type: "ENHANCEMENT",
+                        description: "ELVES HAVE THE MOST POTENT MAGICAL BLOOD IN ESTERA GIVING THEM GREAT INSIGHT INTO THE MAGICAL BINDINGS OF THE WORLD. THEY SEE WHAT MAGIC TRULY LOOKS LIKE, CHARGED ENERGY OF UNMISTAKABLE POWER.",
+                        effect: "GAIN 2 SPELLS AT CLASS SKILL 1 WITH INFINITE CASTS."
+                    },
+                    {
+                        name: "CASTERS TOUCH",
+                        type: "ENHANCEMENT",
+                        description: "ELVES ARE INHERENTLY CASTERS AND ARE ALWAYS TAUGHT THEIR BLOOD GIVES THEM MORE POWER.",
+                        effect: "CAST WITHOUT A CATALYST."
+                    },
+                    {
+                        name: "WEIGHTLESS",
+                        type: "DISADVANTAGE",
+                        description: "ELVES AREN'T KNOWN TO BE THE STRONGEST RACE. IN FACT, THEIR TYPICALLY CONSIDERED THE PHYSICALLY WEAKEST OF ALL THE RACES.",
+                        effect: "GAIN DISADVANTAGE TO ALL STRENGTH SKILL CHECKS"
+                    }
+                ],
+                attributes: [
+                    {
+                        name: "INTELLIGENCE",
+                        value: "+2",
+                        description: "ELVES HAVE A COUNTLESS NUMBER OF BOOKS IN THEIR POSSESION. THEY READ, GAIN KNOWLEDGE, AND THEN DISBURSE THIS KNOWLEDGE UPON THEIR PEERS. THE BEST EDUCATORS IN THE WORLD ARE ELVES."
+                    },
+                    {
+                        name: "ARCANE",
+                        value: "+2",
+                        description: "ELVES ARE MAGICAL IN NATURE AND HAVE INCREASED POWER WITH SPELLS. THEY SEE MAGIC AS IT TRULY IS AND CAN WEILD IT AS IT TRULY IS."
+                    },
+                    {
+                        name: "STRENGTH",
+                        value: "-2",
+                        description: "ELVES ARE QUITE WEAK. NOT VERY STRONG. THEY ARE VERY VERY FRAGILE."
+                    }
+                ]
+            },
+            DWARF: {
+                name: "DWARF",
+                size: "SMALL OR MEDIUM",
+                description: `SHORT AND STOUT AND LOVERS OF ALE, DWARVES ARE AN ISOLATED RACE. ORIGINATING FROM THE STORM MOUNTAINS, THEY ARE A HARDY RACE THAT CAN WITHSTAND THE AFFECTS OF THE STORM. SOME SAY THE DWARVES WERE ORIGINALLY FROM FURTHER WEST IN THE FORGOTTEN LANDS, BUT NO WRITTEN DWARVEN HISTORY OR ARCHITECTURE HAS BEEN SEEN TO THE WEST OF THE MOUNTAINS. MANY DWARVES ARE MEMBERS OF THE GUILD OF DWARVES THAT DISPERSES THE CRAFT OF RUNEWARDING, AN ANCIENT DWARVEN MAGIC SMITHING THAT EMBEDS OR CRAFTS RUNES INTO WEAPONS AND ARMOR, GIVING THESE WEAPONS MAGICAL POWER. DWARVES ARE CHARACTERIZED BY THEIR SHORT BODIES AND THEIR THICK BEARDS. WOMEN TYPICALLY KEEP THEIR HAIRS LONG TO MIMIC THE MENS' LONG BEARDS. THE LONGER THE HAIR OR BEARD THE MORE POWERFUL AND KNOWLEDGABLE A DWARF IS. TYPICALLY OF LIGHTER COMPLEXIONS, THEY USUALLY HAVE RED-AUBURN TO BLACK HAIR.
+
+(TYP. LIFE SPAN: 300 YEARS, ADULTHOOD: 25 YEARS)
+(TYP. HEIGHT: 3'6"-4'6")`,
+                traits: [
+                    {
+                        name: "RUNEWARDING",
+                        type: "MODIFICATION",
+                        description: "RUNEWARDING UTILIZES BOTH MAGIC AND THE STRENGTH OF A SMITH TO IMBUE MAGIC INTO WEAPONS AND ARMOR. ONLY THE DWARVES KNOW THIS ANCIENT ART.",
+                        effect: "CRAFT GAINS 4 TO MODIFIER."
+                    },
+                    {
+                        name: "DRINKERS HEART",
+                        type: "MODIFICATION",
+                        description: "DWARVES CAN DRINK MORE THAN AN ORCS BODY WEIGHT IN ALE AND NOT ONLY LIVE, BUT GENUINELY ENJOY LIFE WITH THAT AMOUNT OF ALCOHOL IN THEIR BODY.",
+                        effect: "RESISTANCE GAINS 4 TO MODIFIER."
+                    },
+                    {
+                        name: "STOUT",
+                        type: "NEGATIVE",
+                        description: "WITH THEIR SHORT AND STOUT BODIES, DWARVES HAVE TROUBLE GETTING AROUND OBSTRUCTIONS AND TYPICALLY CAN'T CLIMB VERY WELL. THEY HAVE TO MAKE CUSTOM ROADS IN THE MOUNTAINS TO ALLOW THEM TO GET AROUND.",
+                        effect: "FINESSE SKILLS LOSE 1 TO MODIFIER."
+                    }
+                ],
+                attributes: [
+                    {
+                        name: "ARCANE",
+                        value: "+2",
+                        description: "DWARVES HAVE GREAT CONTROL OF MAGIC TO THE DEGREE THEY CAN IMBUE IT INTO WEAPONS AND ARMOR."
+                    },
+                    {
+                        name: "STRENGTH",
+                        value: "+2",
+                        description: "DWARVES ARE SO CONDENSED DOWN THAT THEY ARE STRONGER THAN MOST OTHER RACES. THEY'RE ABLE TO CARVE INTO MOUNTAINS AND PUSH BOULDERS FIVE TIMES THEIR SIZE."
+                    },
+                    {
+                        name: "FINESSE",
+                        value: "-2",
+                        description: "WITH THEIR SHORT STATURES, THEY HAVE TROUBLE GETTING AROUND AND HAVE DIFFICULTY PERFORMING MANY ATHLETIC ACTIVITIES, SUCH AS JUMPING AND LUNGING."
+                    }
+                ]
+            },
+            GOBLIN: {
+                name: "GOBLIN",
+                size: "SMALL",
+                description: `SHORT, AGILE, AND GREEN. GOBLINS ARE EPITOMOUS THROUGHOUT THE LANDS FOR BEING THE RACE THAT'LL DO ANYTHING TO MAKE A LIVING. ORIGINALLY FROM THE ACKLANDS, GOBLINS MAINLY RESIDE IN THE TWO CENTRAL REGIONS: THEIR HOME, THE ACKLANDS, AND THE HEARTLANDS. THEY DO VENTURE INTO THE COUNCIL LANDS AND THE STORMLANDS WHERE WORK MAY BE MORE PROLIFEROUS, BUT THEY TEND TO RESIDE OR RETURN TO THEIR TIGHTKNIT COMMUNITIES. GOBLINS ARE KNOWN FOR BEING QUITE DEXTEROUS AND CAN FINESSE THEIR WAY INTO... GOODS. GOBLINS HAVE UNIQUELY SHARP TEETH AND NAILS THAT ALLOW THEM TO QUITE EASILY "RIP" THINGS APART. BE WARY OF GOBLINS. THEY HEAR AND SEE EVERYTHING.
+
+(TYP. LIFE SPAN: 30 YEARS, ADULTHOOD: 10 YEARS)
+(TYP. HEIGHT: 2'3"-3'6")`,
+                traits: [
+                    {
+                        name: "SHARPNESS",
+                        type: "ABILITY",
+                        description: "UNARMED GOBLINS ARE AS DANGEROUS AS ARMED GOBLINS. KEEP WEARY OF THEIR SHARP TEETH AND NAILS.",
+                        effect: "GAIN BITE N' CLAW ABILITY."
+                    },
+                    {
+                        name: "KEEN SENSES",
+                        type: "MODIFICATION",
+                        description: "GOBLINS HAVE KEEN EYES AND CAN PERCEIVE IN DETAIL AT GREATER DISTANCES THAN YOUR AVERAGE EYESIGHT WOULD ALLOW. THEIR POINTED SIDE-FACING EARS ALLOW THEM TO HEAR IN GREATER DETAIL; PINPOINTING WHERE A SOUND IS EXACTLY.",
+                        effect: "SENSE GAINS 4 TO MODIFIER."
+                    },
+                    {
+                        name: "INSIGNIFICANCE",
+                        type: "NEGATIVE",
+                        description: `WITH BEING SMALL AND SHORT, GOBLINS ARE TYPICALLY NOT CONSIDERED INTIMIDATING. "THEY'RE JUST PETTY LITTLE THIEVES" IS WHAT IS COMMONLY THOUGHT OF THEM.`,
+                        effect: "MIGHT LOSES 4 TO MODIFIER."
+                    }
+                ],
+                attributes: [
+                    {
+                        name: "FINESSE",
+                        value: "+2",
+                        description: "GOBLINS ARE INCREDIBLY DEXTEROUS AND NIMBLE ALLOWING THEM COMPLETE FEATS OF FINESSE MORE EASILY."
+                    },
+                    {
+                        name: "INTELLIGENCE",
+                        value: "+2",
+                        description: "EDUCATION MAY NOT BE AT THE FOREFRONT OF GOBLIN CULTURE, BUT THEY TEND TO GAIN KNOWLEDGE FAIRLY QUICKLY COMPARITIVELY TO THE OTHER RACES. MAYBE THEY WERE BESTOWED GREATER CAPACITY TO LEARN."
+                    },
+                    {
+                        name: "INTUITION",
+                        value: "-2",
+                        description: "GOBLINS HAVE DIFFICULTY SPEAKING IN PUBLIC. THEY TEND TO ONLY SPEAK WITH THOSE THEY ARE CLOSE TO. THEY ONLY SPEAK WHEN NEEDED TO, BUT WILL RARELY GO OUT OF THEIR WAY TO TALK TO NEW PEOPLE."
+                    }
+                ]
+            },
+            IMP: {
+                name: "IMP/FAIRY",
+                size: "EXTRA SMALL",
+                description: `VERY TINY, LITTLE WINGED AND MISCHIEVIOUS. THESE LITTLE GUYS AND GALS ARE THE MOST NEFARIOUS BUNCH. ORIGINATING FROM THE LOST LANDS, A TRIO OF ISLANDS OFF THE EASTERN COAST OF THE HEART, THESE CREATURES ARE KNOWN FOR THEIR METICULOUS NEED TO HOLD THINGS AND TAKE THINGS. VERY VERY MISHEVIOUS. THEY AREN'T HELLSPAWN OR ANYTHING. JUST LITTLE FLIERS WITH ANXIETY AND KLEPTOMANIA.
+
+(TYP. LIFE SPAN: 120 YEARS, ADULTHOOD: 10 YEARS)
+(TYP. HEIGHT: 0'3"-1'0")`,
+                traits: [
+                    {
+                        name: "MISCHIEF",
+                        type: "ADVANTAGE",
+                        description: "IMPS GOT A STREAK IN TAKING THINGS THAT AREN'T QUITE THEIRS. THEY HAVE AN UNBELIEVABLE URGE TO GET A BUNCH A SHINY KNICK KNACKS AND THEY'RE QUITE GOOD AT IT.",
+                        effect: "GAIN ADVANTAGE ON STEALTH CHECKS."
+                    },
+                    {
+                        name: "FLAPPY WINGS",
+                        type: "ABILITY",
+                        description: "IMPS CAN FLY. AND GET INTO AWKWARD SMALL POSITIONS WHILE FLYING.",
+                        effect: "GAIN THE FLY ABILITY"
+                    },
+                    {
+                        name: "MOSTLY MUTE",
+                        type: "NEGATIVE",
+                        description: "IMPS ARE UNABLE TO SPEEK TO MOST INDIVIDUALS UNLESS THEY TRULY TRUST THEM.",
+                        effect: "SPEECH LOSES 5 TO MODIFIER"
+                    }
+                ],
+                attributes: [
+                    {
+                        name: "FINESSE",
+                        value: "+2",
+                        description: "IMPS CAN FLY WHEREVER THEY WANT. THEY SEE SOMEPLACE THEY WANT TO GO AND THEY'LL GO THERE NO MATTER WHAT OBSTACLE IS IN THE WAY."
+                    },
+                    {
+                        name: "ARCANE",
+                        value: "+2",
+                        description: "IMPS ARE FANTASTIC COOKS. THEY UTILIZE THEIR MAGIC IN MANY WAYS, BUT COOKING IS THEIR REAL SPECIALTY."
+                    },
+                    {
+                        name: "ADAPTABILITY",
+                        value: "-2",
+                        description: "IMPS HAVE SEVERLY LOW HEALTH BASED ON THEIR VERY SMALL SIZES."
+                    }
+                ]
+            },
+            PRAETOR: {
+                name: "PRAETOR",
+                size: "LARGE OR EXTRA LARGE",
+                description: `CREATED BY THE ECHOEN ANCIENTS, THE PRAETORS ARE A ROCK GOLEM SPECIES GIVEN SENTIENCE VIA THE ANCIENT'S MAGIC. THE PRAETORS ARE A LARGE BROODING BUNCH THAT ORIGINATE FROM SOUTHEASTERN COAST OF THE COUNCIL LANDS CALLED PRAETORIA. THEY ARE BESTOWED GREAT KNOWLEDGE OF THE WORLD AND SWEAR TO PROTECT ALL OF THE LANDS. THE PRAETORS THEMSELVES CAN CREATE MORE PRAETORS, SO THEY CAN CONTINUE TO POPULATE, BUT IT COMES AT A COST. THESE NEW PRAETORS HAVE LESS POWER THAN THE PREVIOUS GENERATION. PRAETORS ALSO DO NOT AGE. THEY ARE ROCK PEOPLE AFTER ALL. MANY PRAETORS ARE A PART OF THE PRAETORIC GUARD, AN ANCIENT ORDER THAT GUARDS THE TEMPLE OF THE ANCIENTS IN PRAETORIA.
+
+(TYP. LIFE SPAN: UNRECORDED AGE-RELATED DEATH, ADULTHOOD: 1 YEAR)
+(TYP. HEIGHT: 6'0"-10'0")`,
+                traits: [
+                    {
+                        name: "THE STANCE",
+                        type: "ADVANTAGE",
+                        description: "PRAETORS, BEING MADE OF STONE, CAN MAINTAIN A UNIQUE CONTORTED STANCE, WHERE THEY THURST THEIR HIPS FORWARD AND CAN ARCH THEIR ARMS BACKWARDS IN A STRONG SUPPORTED ARC. THIS GIVES THEM AN ADVANTAGE WHEN PROTECTING SOMETHING OR SOMEONE.",
+                        effect: "GAIN ADVANTAGE ON DEFENSE CHECKS."
+                    },
+                    {
+                        name: "THE SHIFT",
+                        type: "ADVANTAGE",
+                        description: "PRAETORS HAVING IMMENSE ANCIENT MAGIC WITHIN THEMSELVES AND SHIFT THE WORLD AROUND THEM. THEY CAN PULL THE WATER OUT OF THE SOIL AND CREATE A POND. THEY SAP THE LAVA OUT OF VOLCANOES AND MAKE A MASSIVE FIREBALL. THEY CAN WILL TOGETHER METAL AND FUSE IT WITH THEIR BEAR HANDS. THEY ARE SOMETHING OUT OF THE ORDINARY.",
+                        effect: "GAIN ADVANTAGE ON ALL ARCANE SKILL CHECKS."
+                    },
+                    {
+                        name: "ANTI-INTUITIVE",
+                        type: "DISADVANTAGE",
+                        description: "MOST PRAETORS ONE MAY MEET ARE FROM A BYGONE ERA. THEY HAVE LIVED FOR CENTURIES, SOME MILLENIA, AND AREN'T THE BEST IN UNDERSTANDING HOW THE WORLD WORKS. THEIR GOAL IS TO UNDO ANYTHING TRYING TO BREAK THE BINDINGS OF THE WORLD, BUT UNDERSTANDING IN THE WORLD ISN'T PART OF THER RESUME.",
+                        effect: "GAIN DISADVANTAGE ON ALL INTUITION SKILL CHECKS."
+                    }
+                ],
+                attributes: [
+                    {
+                        name: "STRENGTH",
+                        value: "+2",
+                        description: "THEY ARE ROCK, SO THEY BE STRONG. IN FACT, THEY ARE INCREDIBLY STRONG."
+                    },
+                    {
+                        name: "INTELLIGENCE",
+                        value: "+2",
+                        description: "ALL PRAETORS SAY THEY ARE UNIFIED IN THOUGHT. THEIR INTELLIGENCE IS COMBINED TOGETHER TO FORM AN ENCYLOPEDIC KNOWLEDGE OF ALL THEY SEE, HEAR, OR DO."
+                    },
+                    {
+                        name: "FINESSE",
+                        value: "-2",
+                        description: "PRAETORS ARE INCREDIBLY HEAVY. THEY ARE MADE OF ROCKS AFTER ALL."
+                    }
+                ]
+            },
+            YUPI: {
+                name: "YU-PI",
+                size: "MEDIUM",
+                description: `VERY TALL, VERY NIMBLE, AND VERY INTELLIGENT; THE YU-PI ARE A RACE OF STONE-SKINNED RABBIT PEOPLE. THEY INHERIT THEIR STONE-SKIN FROM THE PI AND THEIR MORE BUNNY-LIKE FEATURES FROM THE YU. THEY ARE HUMANOID AND RETAIN MOST HUMANOID FEATURES EXCLUDING THEIR LONG RABBIT EARS, SHORT PUFFY TAILS, AND POWERFUL DEXTEROUS LEGS. THEY ORIGINATE FROM NURSIUM AND HAVE A LARGE DIASPORA IN THE HEART, SPECIFICALLY NEAR THE SOUTHEASTERN BORDER OF THE STORMLANDS GOING ACROSS THE SOUTHWESTERN BORDER OF THE HEARTLANDS. NOT MUCH IS KNOWN ABOUT THIS RACE'S ORIGIN OTHER THAN THEY ARE A COMBINANT OF TWO SEPARATE RACES THAT EXISTED LONG AGO IN NURSIUM. THEY RETAIN THE CULTURE OF BOTH RACES AND HAVE DILIGENTLY SPREAD THEMSELVES ACROSS TO ENSURE THE SPECIES SURVIVAL.
+
+(TYP. LIFE SPAN: 250 YEARS, ADULTHOOD: 30 YEARS)
+(TYP. HEIGHT: 5'2"-5'8")`,
+                traits: [
+                    {
+                        name: "YU STRIDE - KNOWING OF PI",
+                        type: "ABILITY",
+                        description: `THE YU WERE A RABBIT-LIKE RACE THAT WAS KNOWN FOR THEIR UNIQUE LEAPING STRIDE THAT ALLOWED THEM TO TRAVERSE GREAT DISTANCES WITH RELATIVELY LOW EFFORT.
+
+THE STONEY-SKINNED PI WERE A RACE KNOWN FOR THEIR UNIMANGINABLE ABILITY TO READ MINDS AND UNDERSTAND A PERSON BEFORE THEY EVEN SPOKE. THEY KNEW THINGS ABOUT YOURSELF THAT NOT EVEN YOU WOULD KNOW.`,
+                        effect: "GAIN THE LEAPING RUN ABILITY."
+                    },
+                    {
+                        name: "RECOMBINANT SPEECH",
+                        type: "MODIFICATION",
+                        description: "THE QUICK THINKING YU AND THE KNOWLEDGABLE PI TOGETHER HAVE A UNIQUE ABILITY TO SPEAK. THEY ARE OFTEN HEARD FROM GREAT DISTANCES WITH ELOQUENT AND WELL THOUGHT OUT WORD CHOICE. THEY INSTANTLY SEEM BOTH RELATEABLE AND CHARISMATIC.",
+                        effect: "SPEECH GAINS 4 TO MODIFIER."
+                    },
+                    {
+                        name: "UNENLIGHTENED MAGIC",
+                        type: "NEGATIVE",
+                        description: "EVEN THOUGH THE YU-PI ARE ABLE TO CAST MAGIC, THEY ARE UNABLE TO SEE OR FEEL THE MAGIC AROUND THEMSELVES. NOT THAT THEY ARE TRULY UNABLE, THEY ARE JUST LATENTLY LESS OPEN TO THE MAGIC AROUND THEM.",
+                        effect: "ARCANA LOSES 4 TO MODIFIER."
+                    }
+                ],
+                attributes: [
+                    {
+                        name: "FINESSE",
+                        value: "+2",
+                        description: "THE YU WERE RABBIT-LIKE NOT ONLY IN FEATURES, BUT ALSO IN ABILITY. THEY ARE QUITE DEXTEROUS AND QUICK-ON-THEIR-FEET."
+                    },
+                    {
+                        name: "INTUITION",
+                        value: "+2",
+                        description: "WITH THEIR ABILITY TO READ MINDS, THE YU-PI KNOW MUCH ABOUT THE WORLD. THEY UNDERSTAND OTHER RACES, THE POLITICS ASSOCIATED WITH THOSE RACES, AND THE CUSTOMS AND TRADITIONS. THEY ARE ONE OF THE MOST RESPECTFUL AND CARING OF THE RACES BASED ONLY UPON THE KNOWLEDGE THEY GAIN WITHIN THEIR LIVES."
+                    },
+                    {
+                        name: "ARCANE",
+                        value: "-2",
+                        description: "EVEN WITHOUT MAGIC INHERENTLY WITHIN THEM, THEY CAN STILL CAST SOME FORMS OF MAGIC. THEY ARE LESS ADAPTED TO MAGIC, WHICH MAKES THEIR CASTING WORSE THAN MANY OF THE OTHER RACES."
+                    }
+                ]
+            },
+            GARGOYLE: {
+                name: "GARGOYLE",
+                size: "EXTRA LARGE",
+                description: `SCALEY. LARGE. BEASTIAL. WINGED. SO MANY WAYS TO DESCRIBE THE COMMON GARGOYLE, BUT ONE DOES NOT CONSIDER THEIR WAY OF SOCIETY. ORIGINATING FROM THE ACKLANDS, THEY, STONE FACED AND STONEY-EYED, MONITOR AND GUARD THE ACKLANDS AND CONSIDER IT THEIR DUTY TO ENSURE PURITY OF THE LAND. BUT ONCE DEATH REIGNED, THE ONCE STOIC STATUES OF THE GARGOYLES CAME TO TRUE LIFE. THEY ROAM THE LANDS WITH A FERVOR TO MAINTAIN STABILITY AND ENSURE DEATH IS KEPT AT BAY. THEIR SOCIETY REVOLVES AROUND STABILITY AND IF NEEDED THEY WILL TRAVEL FAR AND WIDE TO MEET THEIR GOALS.
+
+(TYP. LIFE SPAN: UNRECORDED AGE-RELATED DEATH, ADULTHOOD: 5 YEARS)
+(TYP. HEIGHT: 1'0"-10'0")`,
+                traits: [
+                    {
+                        name: "DEADLY FLIGHT",
+                        type: "ABILITY",
+                        description: `THE GARGOYLES, BEING SO BESTIAL AND SO ADEPT AT FLIGHT, WERE SEEN AS AN OMEN OF DEATH. WHEN ONE APPROACHES, DEATH IS NEARBY.
+
+THEIR GAZE FINDS DEATH AND WITH IT THE MEANS TO ENDING GROSS MISDEATH.`,
+                        effect: "GAIN THE FLY AND DEATH'S GAZE ABILITIES."
+                    },
+                    {
+                        name: "MAGICAL SNAP",
+                        type: "ENHANCEMENT",
+                        description: "THE GARGOYLES CAN SNAP THEIR OWN BODY PARTS OFF AND UTILIZED THE CRUMBLING STONE TO CAST SPELLS WITHOUT UTILIZING THE ESSENCE OF THE SPELL. PIECES BROKEN OFF RESTORE AFTER 24 HOURS.",
+                        effect: "BREAK A BODY PART AND SPELLS NO LONGER UTILIZE CASTS FOR THE NEXT HOUR."
+                    },
+                    {
+                        name: "HEAVY",
+                        type: "DISADVANTAGE",
+                        description: "GARGOYLES COME IN MANY HEIGHTS, BUT ALL ARE INCREDIBLY HEAVY. THE STONE THAT MAKES UP THEIR BODIES IS OF AN ARCANE NATURE BREACHIHNG WITH DEATHLY AURA. NO MATTER THE SIZE, GARGOYLES WILL ALWAYS BE EXTRA LARGE.",
+                        effect: "DISADVANTAGE TO ATHLETICS AND STEALTH CHECKS."
+                    }
+                ],
+                attributes: [
+                    {
+                        name: "INTUITION",
+                        value: "+2",
+                        description: "GARGOYLES CAN SENSE EVIL EASILY AND KNOW MANY THINGS ABOUT THE WORLD THROUGH THEIR METAPHYSICAL EYE."
+                    },
+                    {
+                        name: "ARCANE",
+                        value: "+2",
+                        description: "GARGOYLE' ESSENCE IS THEIR BLOOD. A PURE FORM OF MAGICAL BLOOD THAT ALLOWS THEIR STONEY BODIES TO FUNCTION. THIS BLOOD ENHANCES THEIR MAGICAL PROWESS."
+                    },
+                    {
+                        name: "ADAPTABILITY",
+                        value: "-2",
+                        description: "THEY MAY BE MADE OF STONE, BUT THAT DOES NOT MEAN THEY ARE DURABLE. GARGOYLES CAN BREAK THEMSELVES AND CAN EASILY BE BROKEN BY OTHERS. TAKE A METAL MALLET TO ROCKET AND WATCH WHAT HAPPENS."
+                    }
+                ]
+            },
+            MEEAWK: {
+                name: "MEEAWK",
+                size: "SMALL, MEDIUM, OR LARGE",
+                description: `PEOPLE OF THE FEATHER ORIGINATING FROM THE STORMLANDS; NOW A WORLD OVER. MANY DIFFERENT FEATHERS. MANY DIFFERENT APPEARANCES. LEGENDS SAY THAT THE MEEAWK WERE ONE SINGULAR SPECIES OF ANTHROPOMORPHIC BIRDS WITH A SINGULAR IDENTITY WITH A COLLECTIVE MIND. NOW, THE WINGS HAVE SPREAD. THE MEEAWK ARE NO LONGER ONE PEOPLE. THEY ARE A PEOPLE OF MANY. VARIOUS KINDS OF BIRDS. SOME JET BLACK. OTHERS COLORFUL LIKE RAINBOWS. THEIR COLLECTIVE MIND GAVE WAY TO MANY FREE THINKERS. MEEAWK ARE KNOWN FOR THEIR SPIRITUAL AND INTELLECTUAL ABILITIES BEING NOT ONLY IN TUNE WITH NATURE BUT ALSO WITH THE NATURAL ARTS. MANY OF THE GREATEST SCIENTISTS OF LORE WERE OF MEEAWK ORIGIN. MAYBE THEIR PASTS AS A COLLECTIVE MIND HAS RESULTED IN THE DIVERSITY OF MIND NOW AMONGST THE MEEAWK.
+
+(TYP. LIFE SPAN: 75 YEARS, ADULTHOOD: 10 YEARS)
+(TYP. HEIGHT: 3'6"-6'6")`,
+                traits: [
+                    {
+                        name: "THE NATURAL WORLD",
+                        type: "MODIFICATION",
+                        description: "THE MEEAWK ARE FAMED FOR THEIR RENOWNED KNOWLEDGE OF THE NATURAL WORLD AND THEIR DISTINCT INTUITION AND PERCEPTION OF THE WORLD. MANY THEORIES PROVEN BY THE MEEAWK ARE ALSO SECRETS OF THEIR LONG STORIED HISTORY. THEIR COLLECTIVE WAS BEYOND THEIR TIMES.",
+                        effect: "KNOWLEDGE GAINS 4 TO MODIFIER."
+                    },
+                    {
+                        name: "THE NATURAL GIFT",
+                        type: "MODIFICATION",
+                        description: "THE MEEAWK ARE NATURALS WITH OTHER NON-ANTHROPOMORPHIC ANIMALS. THEY ARE QUICK TO BEFRIEND AND EVEN QUICKER AT TAMING. NATURE IS IN THEIR BLOOD.",
+                        effect: "TAMING GAINS 4 TO MODIFIER."
+                    },
+                    {
+                        name: "THE NATURAL LOSS",
+                        type: "NEGATIVE",
+                        description: "THEIR PAST COLLECTIVE MIND IS NO MORE AND WITH THAT SO IS THEIR ABILITY TO SURVIVE IN THE WILDS. MANY MEEAWK SEEK THE SAFETY AND SECLUSION OF THE INDOORS.",
+                        effect: "SURVIVAL LOSES 8 TO MODIFIER."
+                    }
+                ],
+                attributes: [
+                    {
+                        name: "INTUITION",
+                        value: "+2",
+                        description: "WITH THEIR INATE VIEW OF THE WORLD, MEEAWK TEND TO HAVE A GREATER UNDERSTANDING OF THE LIVING THINGS OF THIS WORLD. THEY CONNECT AT A GREATER LEVEL."
+                    },
+                    {
+                        name: "INTELLIGENCE",
+                        value: "+2",
+                        description: "THE MEEAWK SEEK KNOWLEDGE. THEY WILL READ BOOKS DAY AND NIGHT SEEKING TO QUENCH THEIR THIRST FOR KNOWLEDGE. REREADING BOOKS TO FIND HIDDEN MEANINGS OR MISSED UNDERSTANDINGS. THEY ARE A SPECIAL KIND OF NEUROTIC."
+                    },
+                    {
+                        name: "ADAPTABILITY",
+                        value: "-2",
+                        description: "WEAK FROM THE CENTURIES OF LOSS. NO LONGER A COLLECTIVE MIND THEY NO LONGER SEEK TO ADVANTAGE THEIR BODIES. THEY ARE FOUL AT BEING FOWLS."
+                    }
+                ]
+            },
+            ZEELO: {
+                name: "ZEE-ELO",
+                size: "EXTRA SMALL, SMALL, OR MEDIUM",
+                description: `THE ZEE-ELO. THE TRIBE OF SENTIENT, ANTHROPOMORPHIC LIZARD FOLK. ONE TRIBE FAR OFF IN THE ACKLANDS. WELL, ONE MASSIVE TRIBE. THEY MULTIPLY LIKE RABBITS. THE PEOPLE OF ZEE-ELO ARE VERY NIHILISTIC ABOUT THE NATURAL WORLD; VIEWING LIFE AS ONE STEP IN A GREATER CHAIN OF ASCENDANCY. THEY PRIDE THEMSELVES ON THEIR DEVOUT ENERGY TO THEIR GOD, ZEE, AND THEIR GODDESS, ELO. ZEE AND ELO ARE THE CREATOR GODS OF THE ZEE-ELO. THEIR CREATIVITY KNOWS NO BOUNDS...
+
+BEING INCREDIBLY DEVOUT AND INCREDIBLY STUBBORN, THEY MAKE FEW FRIENDS WITH THE OTHER RACES. THEY ARE RARELY SEEN OUTSIDE OF THEIR TRIBAL LANDS, BUT A FEW DO MAKE THE TREK TO SPREAD THEIR KNOWLEDGE TO THE WORLD.
+
+(TYP. LIFE SPAN: 25 YEARS, ADULTHOOD: 5 YEARS)
+(TYP. HEIGHT: 1'2"-5'8")`,
+                traits: [
+                    {
+                        name: "DEVOTION OF ZEE AND ELO",
+                        type: "ABILITY",
+                        description: "THE ZEE-ELO MUST PRAY TO THEIR GOD AND GODDESS EVERY DAY TO MAINTAIN THEIR FAITH. TO ENSURE THEY HAVE THE ABILITY TO OPRAY UTSIDE OF THE TEMPLES, THE CLERGY HAVE TAUGHT THEIR PEOPLE THE WAY OF DEVOTION. SPILLING BLOOD IS ONE MEANS OF DEVOTION, BUT OTHER MEANS EXIST AS WELL. WITH EACH DEVOTION, THE ZEE-ELO GET STRONGER. PHYSICALLY STRONGER.",
+                        effect: "GAIN THE DEVOTION ABILITY."
+                    },
+                    {
+                        name: "LIZARD BRAIN",
+                        type: "ADVANTAGE",
+                        description: "THEIR FAITH PROTECTS THEM THE ILL MEANS OF THIS WORLD. NOTHING BREAKS THEIR FOCUS TO THEIR FAITH.",
+                        effect: "ADVANTAGE ON RESISTANCE CHECKS."
+                    },
+                    {
+                        name: "FANATIC INCOHERENCE",
+                        type: "NEGATIVE",
+                        description: "DUE TO THEIR FANATICAL NATURE, ZEE-ELO FIND THEMSELVES AT ODDS WITH THE OTHER PEOPLE OF THIS WORLD. THEY TEND TO HAVE TROUBLES CONVINCING OR EVEN SPEAKING WITH ANY OF THE OTHER RACES.",
+                        effect: "SPEECH LOSES 5 TO MODIFIER."
+                    }
+                ],
+                attributes: [
+                    {
+                        name: "INTUITION",
+                        value: "+2",
+                        description: "ZEE AND ELO HAVE PROVIDED THEIR DEVOUT FOLLOWERS THE BASTION OF KNOWING THE MEANING BEHIND ALL WORDS AND ACTIONS."
+                    },
+                    {
+                        name: "ADAPTABILITY",
+                        value: "+2",
+                        description: "BEING OF THE LIZARD, THE ZEE-ELO GAIN THEIR STRENGTH FROM FIRE AND THE SUN. HEAT OF ANY KIND PROVIDES THEM WITH INCREASED HEALTH. THE ZEE-ELO FEEL ENERGIZED ALL DAY LONG AND EVEN INTO THE NIGHT WITH THEIR ABILITY TO RETAIN THE HEAT OF THE DAY INTO THE NIGHT."
+                    },
+                    {
+                        name: "STRENGTH",
+                        value: "-2",
+                        description: "HAVE TO RELY ON THE SUN FOR ENERGY, EQUATES TO EFFICIENT USE OF ENERGY. DOING THINGS WITH IMMENSE POWER OR SHORT QUICK BURSTS OF WORK IS DIFFICULT. RATHER, THE ZEE-ELO PREFER EFFICIENT, LOW-ENERGY TASKS THAT THEY CAN DO THROUGHOUT THEIR DAY."
+                    }
+                ]
+            },
+            ANSUK: {
+                name: "ANSUK",
+                size: "MEDIUM",
+                description: `THESE FOLK TRAVELED FAR BEYOND THE FORBIDDEN LANDS AND RESIDE IN SMALL COMMUNITIES THROUGHOUT THE LANDS. THEIR UNIQUE HORNS SYMBOLIZE THEIR HEIRARCHY IN THE COMMUNITY. LONGER, MORE TWISTED HORNS DENOTE HIGHER BIRTH; SHORTER, STRAIGHT HORNS DENOTE LOWER BIRTH. THEIR CASTE SYSTEM DOES NOT PREJUDICE AGAINST OCCUPATION BUT RATHER SOCIALLY. MANY HIGH FOLK ANSUK AND LOW FOLK ANSUK RESIDE TOGETHER, BUT SOCIAL STRIFE AMONGST THEM PREVENTS COPOPULATION. THEY TEND TO BE MUCH MORE NOMADIC THAN THE OTHER RACES AND DERIVE MUCH OF THEIR POWER FROM THE HEARTS OF HEAT THAT RESIDE IN THEIR CHESTS. LIVING THE LONGEST OF ANY OF THE BIOLOGICAL SPECIES, THE ANSUK HAVE DERIVED MEDICINE AND MAGIC THAT ONLY THEIR FOLK CAN UTILIZE. THE HEARTS OF HEAT PROVIDE THEM THEIR LONG LIFE AND ALSO THEIR SPECIFIC MAGIC. THE MAGIC UTILIZES THREADS OF MANA THAT ARE SIMILAR TO THE WEAVE, BUT ARE A DERIVATIVE OF A LONG ANCIENT STORIED MAGIC. MANY ANSUK USE THEIR MAGIC FOR THEIR COMMUNITIES TO SAFE-GUARD AND TO ENSURE PROSPERITY. WITH THEIR NOMADIC LIVES, MANY WILL BE SEEN IN TOWNS AND CITIES FOR TRADE PURPOSES. VERY FEW STRAGGLERS OR LONE ANSUK ARE SEEN.
+
+(TYP. LIFE SPAN: 500 YEARS, ADULTHOOD: 25 YEARS)
+(TYP. HEIGHT: 4'10"-6'2", INCLUDES HORNS)`,
+                traits: [
+                    {
+                        name: "HORNED MAGIC",
+                        type: "ENHANCEMENT",
+                        description: "THE UNIQUE MAGIC THE ANSUK CONTROL BESTOWS THEM POWER NO OTHER RACE CAN UTILIZE. AT THIS POINT, THIS MAGIC TAKES THE FORM OF THREAD THAT CONNECTS THE PAST TO THE PRESENT. POTENTIALLY THE FUTURE TOO, BUT THE RISK IS HIGH. KNOWING THE FUTURE WOULD PREDICATE AN ACTION IN THE PRESENT TO ENSURE OR ERRADICATE THAT FUTURE. THE ANSUK ARE CAREFUL WITH THIS AND RARELY USE THIS MAGIC FOR PREDICTING THE FUTURE.",
+                        effect: "GAIN THE HORNED DERIVATION AND HORNED KNIT SPELLS AS WELL AS ONE CLASS SKILL 1 SPELL WITH INFINITE CASTS"
+                    },
+                    {
+                        name: "NOMADIC AGE",
+                        type: "ADVANTAGE",
+                        description: "WITH THEIR EXTREMELY LONG AGES AND NOMADIC TENDENCIES, THE ANSUK HAVE ADAPTED INCREDIBLY WELL TO EVERY ENVIRONMENT ON THIS WORLD. COMING FROM THE FORGOTTEN LANDS, THE ANSUK HAVE SEEN EVERY POTENTIAL BIOME AND HAVE TRECKED AMONGST THE PEOPLES OF ALL RACES. SEEING AS THEY ARE STILL FORTUITOUS, THEY NOT ONLY ADAPTED, BUT THEY HAVE THRIVED.",
+                        effect: "ADVANTAGE ON ALL ADAPTABILITY SKILL CHECKS."
+                    },
+                    {
+                        name: "UNADAPTIVE MAGIC",
+                        type: "DISADVANTAGE",
+                        description: "ANSUK ARE WELL-VERSED WITH THEIR THREAD BASED MAGIC, BUT ARE FAIRLY UNSKILLED WITH THE COMMMON MAGIC OF THE LANDS. THEY TEND LOSE FOCUS AND ATTEMPT IMPLEMENT THEIR OWN MAGIC WITH THE TEACHINGS OF CASTERS.",
+                        effect: "DISADVANTAGE ON ALL ARCANE SKILL CHECKS."
+                    }
+                ],
+                attributes: [
+                    {
+                        name: "ADAPTABILITY",
+                        value: "+2",
+                        description: "LONGEVITY INCREASED DUE TO THEIR INHERENT MAGICAL HEARTS THAT HEAT AND COOL IN DIFFERENT PERIODS OF LIFE."
+                    },
+                    {
+                        name: "FINESSE",
+                        value: "+2",
+                        description: "MASTERS OF THREAD WEAVING, THE ANSUK HAVE VERY DEXTEROUS FINGERS AND CAN DO VERY FINITE, EXACT MOVEMENTS QUICKLY AND EASILY."
+                    },
+                    {
+                        name: "INTUITION",
+                        value: "-2",
+                        description: "BEING A PART OF A CASTE SYSTEM, THE ANSUK TEND TO HAVE ROUGHER RELATIONS WITH EACH OTHER, LEADING TO A DECREASE IN SOCIAL SKILLS."
+                    }
+                ]
+            }
+        };
+
+        let currentRace = 'HUMAN';
+
+        function renderRace(raceName) {
+            const race = races[raceName];
+            const container = document.getElementById('raceContainer');
+            
+            container.innerHTML = `
+                <div class="header">
+                    <h1 class="race-name">${race.name}</h1>
+                    <div class="race-size">${race.size}</div>
+                </div>
+                
+                <div class="description">${race.description}</div>
+                
+                <div class="section">
+                    <h2 class="section-title">Racial Traits</h2>
+                    <div class="trait-grid">
+                        ${race.traits.map(trait => `
+                            <div class="trait">
+                                <div class="trait-header">
+                                    <span class="trait-name">${trait.name}</span>
+                                    <span class="trait-type ${trait.type.toLowerCase()}">${trait.type}</span>
+                                </div>
+                                <div class="trait-description">${trait.description}</div>
+                                <div class="trait-effect">${trait.effect}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h2 class="section-title">Attribute Modifiers</h2>
+                    <div class="stat-bonuses">
+                        ${race.attributes.map(attr => `
+                            <div class="stat-box">
+                                <div class="stat-name">${attr.name}</div>
+                                <div class="stat-value ${attr.value.includes('-') ? 'negative' : ''}">${attr.value}</div>
+                                <div class="stat-description">${attr.description}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSelector() {
+            const selector = document.getElementById('raceSelector');
+            selector.innerHTML = Object.keys(races).map(raceName => `
+                <button class="race-button ${raceName === currentRace ? 'active' : ''}" 
+                        onclick="selectRace('${raceName}')">
+                    ${races[raceName].name}
+                </button>
+            `).join('');
+        }
+
+        function selectRace(raceName) {
+            currentRace = raceName;
+            renderSelector();
+            renderRace(raceName);
+        }
+
+        // Initialize
+        renderSelector();
+        renderRace(currentRace);
+    </script>
+</body>
+</html>

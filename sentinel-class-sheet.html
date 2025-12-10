@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel Class Sheet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e8e8e8;
+            padding: 20px;
+            line-height: 1.4;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: linear-gradient(to bottom, #2a2a3e 0%, #1f1f2e 100%);
+            border: 3px solid #8b6914;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 0 40px rgba(139, 105, 20, 0.3);
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #8b6914;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+            background: linear-gradient(90deg, transparent, rgba(139, 105, 20, 0.2), transparent);
+        }
+        
+        .class-name {
+            font-size: 3em;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+        
+        .class-type {
+            font-size: 1.3em;
+            color: #87ceeb;
+            letter-spacing: 2px;
+        }
+        
+        .description {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-left: 4px solid #8b6914;
+            margin: 20px 0;
+            font-style: italic;
+            font-size: 1.05em;
+        }
+        
+        .section {
+            margin: 25px 0;
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: #ffd700;
+            border-bottom: 2px solid #8b6914;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title::before {
+            content: "⚡";
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+        
+        .starting-equipment {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .equipment-item {
+            padding: 8px;
+            background: rgba(139, 105, 20, 0.2);
+            border-left: 3px solid #8b6914;
+            font-size: 0.95em;
+        }
+        
+        .trait-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .trait {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #8b6914;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        
+        .trait-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .trait-name {
+            font-size: 1.3em;
+            color: #ffd700;
+            font-weight: bold;
+        }
+        
+        .trait-type {
+            background: #8b6914;
+            padding: 4px 12px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .trait-type.modification { background: #4169e1; }
+        .trait-type.spell { background: #9370db; }
+        .trait-type.negative { background: #dc143c; }
+        .trait-type.ability { background: #900044; }
+        .trait-type.advantage { background: #030288; }
+        .trait-type.enhancement { background: #8d6650; }
+        .trait-type.disadvantage { background: #4c5539; }
+        .trait-type.combat { background: #9eb99a; }
+        .trait-type.adjustment { background: #6b4423; }
+        
+        .trait-description {
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        
+        .trait-effect {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(139, 105, 20, 0.2);
+            border-left: 3px solid #ffd700;
+            font-weight: bold;
+            color: #87ceeb;
+        }
+        
+        .stat-bonuses {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #8b6914;
+            padding: 15px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        
+        .stat-name {
+            font-size: 1.2em;
+            color: #ffd700;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            color: #87ceeb;
+            font-weight: bold;
+        }
+        
+        .stat-value.negative {
+            color: #ff6b6b;
+        }
+        
+        .progression {
+            margin-top: 30px;
+        }
+        
+        .level-entry {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #8b6914;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .level-header {
+            background: linear-gradient(90deg, #8b6914, #6d5411);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .level-header:hover {
+            background: linear-gradient(90deg, #9d7515, #7d6012);
+        }
+        
+        .level-number {
+            font-size: 1.5em;
+            color: #ffd700;
+            font-weight: bold;
+        }
+        
+        .level-content {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .gains, .requirements {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .gains-title, .requirements-title {
+            color: #87ceeb;
+            font-size: 1.2em;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+        
+        .gains ul, .requirements ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .gains li, .requirements li {
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .gains li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #ffd700;
+        }
+        
+        .requirements li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #87ceeb;
+        }
+        
+        @media (max-width: 768px) {
+            .level-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .class-name {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="class-name">SENTINEL</h1>
+            <div class="class-type">STRENGTH • FINESSE • DEFENSE</div>
+        </div>
+        
+        <div class="description">
+            A staunch protector. An individual with hardened resolve against an enemy of your people. You take the fight to them and rampage against anyone in your way. Your choice of favor delivers you great power and you are able to defeat the greatest of foes. Protect what you love and end your enemies.
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">Starting Equipment</h2>
+            <div class="starting-equipment">
+                <div class="equipment-item">1 Starter Weapon</div>
+                <div class="equipment-item">1 Shield Starter Tool</div>
+                <div class="equipment-item">1 Bronze Mail</div>
+                <div class="equipment-item">10 Rations</div>
+                <div class="equipment-item">Camp Supplies</div>
+                <div class="equipment-item">5 Bandages</div>
+                <div class="equipment-item">3 Minor Healing Potions</div>
+                <div class="equipment-item">1 Strengthening Glue</div>
+                <div class="equipment-item">3 Fresh Goods of Choice</div>
+                <div class="equipment-item">3 Golden Coins</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">Class Traits</h2>
+            <div class="trait-grid">
+                <div class="trait">
+                    <div class="trait-header">
+                        <span class="trait-name">Choice of Favor</span>
+                        <span class="trait-type enhancement">Enhancement</span>
+                    </div>
+                    <div class="trait-description">
+                        Chosen enemies are much easier to fight. Sentinels learn their sworn enemy inside and out and know exactly how to hit them to achieve the greatest damage potential.
+                    </div>
+                    <div class="trait-effect">Gain advantage and +2 DR in combat against any race, beasts, fiends, fey, undead, or deific enemies. (Pick one and it's a locked choice)</div>
+                </div>
+                
+                <div class="trait">
+                    <div class="trait-header">
+                        <span class="trait-name">Resolved Rampage</span>
+                        <span class="trait-type ability">Ability</span>
+                    </div>
+                    <div class="trait-description">
+                        Against your chosen enemies, you strike with increased fervor. Against your non-chosen enemies, you strike once with great resolve.
+                    </div>
+                    <div class="trait-effect">Gain Resolved Strike and Fervorish Rampage abilities</div>
+                </div>
+                
+                <div class="trait">
+                    <div class="trait-header">
+                        <span class="trait-name">Tunnel Vision</span>
+                        <span class="trait-type adjustment">Adjustment</span>
+                    </div>
+                    <div class="trait-description">
+                        When your chosen enemy is in full view, you see nothing but them. Your resolve diminishes and replaced with fervor.
+                    </div>
+                    <div class="trait-effect">If your chosen enemy, from Choice of Favor, is in combat, you can only target them</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">Stat Modifiers</h2>
+            <div class="stat-bonuses">
+                <div class="stat-box">
+                    <div class="stat-name">Strength</div>
+                    <div class="stat-value">+2</div>
+                    <div style="margin-top: 10px; font-size: 0.9em;">True Damage</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-name">Finesse</div>
+                    <div class="stat-value">+2</div>
+                    <div style="margin-top: 10px; font-size: 0.9em;">Critical Vision</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-name">Arcane</div>
+                    <div class="stat-value negative">-2</div>
+                    <div style="margin-top: 10px; font-size: 0.9em;">Normality</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section progression">
+            <h2 class="section-title">Class Skill Progression</h2>
+            
+            <div class="level-entry">
+                <div class="level-header">
+                    <span class="level-number">Class Skill 0</span>
+                </div>
+                <div class="level-content">
+                    <div class="gains">
+                        <div class="gains-title">Gains</div>
+                        <ul>
+                            <li>Gain 1 Sentinel ability</li>
+                            <li>Gain +1 to Finesse</li>
+                        </ul>
+                    </div>
+                    <div class="requirements">
+                        <div class="requirements-title">Ascension Requirements</div>
+                        <ul>
+                            <li>Character Level 1 Required</li>
+                            <li>Use any ability charge 2 times</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="level-entry">
+                <div class="level-header">
+                    <span class="level-number">Class Skill 1</span>
+                </div>
+                <div class="level-content">
+                    <div class="gains">
+                        <div class="gains-title">Gains</div>
+                        <ul>
+                            <li>Gain 2 Sentinel abilities</li>
+                            <li>Gain Beginner's Guard ability</li>
+                        </ul>
+                    </div>
+                    <div class="requirements">
+                        <div class="requirements-title">Ascension Requirements</div>
+                        <ul>
+                            <li>Character Level 2 Required</li>
+                            <li>Use any ability charge 10 times</li>
+                            <li>Use Beginner's Guard 10 times</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="level-entry">
+                <div class="level-header">
+                    <span class="level-number">Class Skill 2</span>
+                </div>
+                <div class="level-content">
+                    <div class="gains">
+                        <div class="gains-title">Gains</div>
+                        <ul>
+                            <li>Gain 2 Sentinel abilities</li>
+                            <li>Gain Medial Fisticuffs ability</li>
+                            <li>Gain +1 to Strength</li>
+                        </ul>
+                    </div>
+                    <div class="requirements">
+                        <div class="requirements-title">Ascension Requirements</div>
+                        <ul>
+                            <li>Character Level 4 Required</li>
+                            <li>Use any ability charge 14 times</li>
+                            <li>Use Beginner's Guard 7 times</li>
+                            <li>Use Medial Fisticuffs 7 times</li>
+                            <li>OR: Use your skills 8 times</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="level-entry">
+                <div class="level-header">
+                    <span class="level-number">Class Skill 3</span>
+                </div>
+                <div class="level-content">
+                    <div class="gains">
+                        <div class="gains-title">Gains</div>
+                        <ul>
+                            <li>Gain 2 Sentinel abilities</li>
+                            <li>Gain Novice's Guard ability</li>
+                        </ul>
+                    </div>
+                    <div class="requirements">
+                        <div class="requirements-title">Ascension Requirements</div>
+                        <ul>
+                            <li>Character Level 6 Required</li>
+                            <li>Use any ability charge 16 times</li>
+                            <li>Use Novice's Guard 8 times</li>
+                            <li>Use Medial Fisticuffs 8 times</li>
+                            <li>OR: Use your skills 8 times (excludes Defense skill)</li>
+                            <li>OR: Use your Defense skill 8 times</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="level-entry">
+                <div class="level-header">
+                    <span class="level-number">Class Skill 4</span>
+                </div>
+                <div class="level-content">
+                    <div class="gains">
+                        <div class="gains-title">Gains</div>
+                        <ul>
+                            <li>Gain 2 Sentinel abilities</li>
+                            <li>Gain Proficient Fisticuffs ability</li>
+                            <li>Gain +1 to Finesse</li>
+                        </ul>
+                    </div>
+                    <div class="requirements">
+                        <div class="requirements-title">Ascension Requirements</div>
+                        <ul>
+                            <li>Character Level 8 Required</li>
+                            <li>Use any ability charge 16 times</li>
+                            <li>Use Novice's Guard 10 times</li>
+                            <li>Use Proficient Fisticuffs 10 times</li>
+                            <li>OR: Use your skills 10 times (excludes Defense skill)</li>
+                            <li>OR: Use your Defense skill 10 times</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="level-entry">
+                <div class="level-header">
+                    <span class="level-number">Class Skill 5</span>
+                </div>
+                <div class="level-content">
+                    <div class="gains">
+                        <div class="gains-title">Gains</div>
+                        <ul>
+                            <li>Gain 2 Sentinel abilities</li>
+                            <li>Gain Advanced Guard ability</li>
+                            <li>Gain Focused Slam ability</li>
+                        </ul>
+                    </div>
+                    <div class="requirements">
+                        <div class="requirements-title">Ascension Requirements</div>
+                        <ul>
+                            <li>Character Level 10 Required</li>
+                            <li>Use any ability charge 18 times</li>
+                            <li>Use Advanced Guard 8 times</li>
+                            <li>Use Proficient Fisticuffs 8 times</li>
+                            <li>Use Focused Slam ability 8 times</li>
+                            <li>OR: Use your skills 12 times (excludes Defense skill)</li>
+                            <li>OR: Use your Defense skill 12 times</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="level-entry">
+                <div class="level-header">
+                    <span class="level-number">Class Skill 6</span>
+                </div>
+                <div class="level-content">
+                    <div class="gains">
+                        <div class="gains-title">Gains</div>
+                        <ul>
+                            <li>Gain 2 Sentinel abilities</li>
+                            <li>Gain Advanced Fisticuffs ability</li>
+                            <li>Gain Mighted Defense ability</li>
+                            <li>Gain +1 to Strength</li>
+                        </ul>
+                    </div>
+                    <div class="requirements">
+                        <div class="requirements-title">Ascension Requirements</div>
+                        <ul>
+                            <li>Character Level 12 Required</li>
+                            <li>Use any ability charge 22 times</li>
+                            <li>Use Advanced Guard 14 times</li>
+                            <li>Use Advanced Fisticuffs 14 times</li>
+                            <li>Use Focused Slam ability 14 times</li>
+                            <li>OR: Use your skills 14 times (excludes Defense skill)</li>
+                            <li>OR: Use your Defense skill 14 times</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="level-entry">
+                <div class="level-header">
+                    <span class="level-number">Class Skill 7</span>
+                </div>
+                <div class="level-content">
+                    <div class="gains">
+                        <div class="gains-title">Gains</div>
+                        <ul>
+                            <li>Gain 2 Sentinel abilities</li>
+                        </ul>
+                    </div>
+                    <div class="requirements">
+                        <div class="requirements-title">Ascension Requirements</div>
+                        <ul>
+                            <li>Character Level 15 Required</li>
+                            <li>Use any ability charge 24 times</li>
+                            <li>Use Advanced Guard 14 times</li>
+                            <li>Use Advanced Fisticuffs 14 times</li>
+                            <li>Use Focused Slam ability 14 times</li>
+                            <li>Use Mighted Defense ability 10 times</li>
+                            <li>OR: Use your skills 16 times (excludes Defense skill)</li>
+                            <li>OR: Use your Defense skill 16 times</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="level-entry">
+                <div class="level-header">
+                    <span class="level-number">Class Skill 8</span>
+                </div>
+                <div class="level-content">
+                    <div class="gains">
+                        <div class="gains-title">Gains</div>
+                        <ul>
+                            <li>Gain 2 Sentinel abilities</li>
+                            <li>Gain Improved Focused Slam</li>
+                            <li>Gain Expert Guard</li>
+                            <li>Gain +1 to Finesse</li>
+                        </ul>
+                    </div>
+                    <div class="requirements">
+                        <div class="requirements-title">Ascension Requirements</div>
+                        <ul>
+                            <li>Character Level 17 Required</li>
+                            <li>Use any ability charge 20 times</li>
+                            <li>Use Advanced Guard 14 times</li>
+                            <li>Use Advanced Fisticuffs 14 times</li>
+                            <li>Use Improved Focused Slam ability 14 times</li>
+                            <li>Use Mighted Defense ability 14 times</li>
+                            <li>Use your Defense skill 16 times</li>
+                            <li>OR: Use your skills 16 times (excludes Defense skill)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="level-entry">
+                <div class="level-header">
+                    <span class="level-number">Class Skill 9</span>
+                </div>
+                <div class="level-content">
+                    <div class="gains">
+                        <div class="gains-title">Gains</div>
+                        <ul>
+                            <li>Gain 2 Sentinel abilities</li>
+                            <li>Gain Improved Mighted Defense ability</li>
+                            <li>Gain Expert Fisticuffs</li>
+                        </ul>
+                    </div>
+                    <div class="requirements">
+                        <div class="requirements-title">Ascension Requirements</div>
+                        <ul>
+                            <li>Character Level 20 Required</li>
+                            <li>Use any ability charge 20 times</li>
+                            <li>Use Advanced Guard 15 times</li>
+                            <li>Use Advanced Fisticuffs 15 times</li>
+                            <li>Use Improved Focused Slam ability 15 times</li>
+                            <li>Use Improved Mighted Defense ability 15 times</li>
+                            <li>Use your Defense skill 20 times</li>
+                            <li>Use your skills 20 times (excludes Defense skill)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="level-entry">
+                <div class="level-header">
+                    <span class="level-number">Class Skill 10</span>
+                </div>
+                <div class="level-content">
+                    <div class="gains">
+                        <div class="gains-title">Gains</div>
+                        <ul>
+                            <li>Gain 1 Sentinel ability</li>
+                            <li>Gain 1 Sentinel Legendary ability</li>
+                            <li>All Strength based skills gain +4 to modifier</li>
+                            <li>Gain +1 to Strength</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
