@@ -1,0 +1,605 @@
+<style>* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e8e8e8;
+            padding: 20px;
+            line-height: 1.4;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: linear-gradient(to bottom, #2a2a3e 0%, #1f1f2e 100%);
+            border: 3px solid #8b6914;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 0 40px rgba(139, 105, 20, 0.3);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #8b6914;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+            background: linear-gradient(90deg, transparent, rgba(139, 105, 20, 0.2), transparent);
+        }
+        .class-name {
+            font-size: 3em;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+        .class-type {
+            font-size: 1.3em;
+            color: #87ceeb;
+            letter-spacing: 2px;
+        }
+        .description {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-left: 4px solid #8b6914;
+            margin: 20px 0;
+            font-style: italic;
+            font-size: 1.05em;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section-title {
+            font-size: 1.8em;
+            color: #ffd700;
+            border-bottom: 2px solid #8b6914;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .section-title::before {
+            content: "⚡";
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+        .starting-equipment {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .equipment-item {
+            padding: 8px;
+            background: rgba(139, 105, 20, 0.2);
+            border-left: 3px solid #8b6914;
+            font-size: 0.95em;
+        }
+        .trait-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        .trait {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #8b6914;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .trait-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .trait-name {
+            font-size: 1.3em;
+            color: #ffd700;
+            font-weight: bold;
+        }
+        .trait-type {
+            background: #8b6914;
+            padding: 4px 12px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .trait-type.modification { background: #4169e1; }
+        .trait-type.spell { background: #9370db; }
+        .trait-type.negative { background: #dc143c; }
+        .trait-type.ability { background: #900044; }
+        .trait-type.advantage { background: #030288; }
+        .trait-type.enhancement { background: #8d6650; }
+        .trait-type.disadvantage { background: #4c5539; }
+        .trait-type.combat { background: #9eb99a; }
+        .trait-description {
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .trait-effect {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(139, 105, 20, 0.2);
+            border-left: 3px solid #ffd700;
+            font-weight: bold;
+            color: #87ceeb;
+        }
+        .stat-bonuses {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #8b6914;
+            padding: 15px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .stat-name {
+            font-size: 1.2em;
+            color: #ffd700;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 2em;
+            color: #87ceeb;
+            font-weight: bold;
+        }
+        .stat-value.negative {
+            color: #ff6b6b;
+        }
+        .progression {
+            margin-top: 30px;
+        }
+        .level-entry {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #8b6914;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .level-header {
+            background: linear-gradient(90deg, #8b6914, #6d5411);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .level-header:hover {
+            background: linear-gradient(90deg, #9d7515, #7d6012);
+        }
+        .level-number {
+            font-size: 1.5em;
+            color: #ffd700;
+            font-weight: bold;
+        }
+        .level-content {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .gains, .requirements {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .gains-title, .requirements-title {
+            color: #87ceeb;
+            font-size: 1.2em;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+        .gains ul, .requirements ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .gains li, .requirements li {
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        .gains li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #ffd700;
+        }
+        .requirements li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #87ceeb;
+        }
+        @media (max-width: 768px) {
+            .level-content {
+                grid-template-columns: 1fr;
+            }
+            .class-name {
+                font-size: 2em;
+            }
+        }</style>
+<div class="container">
+  <div class="header">
+    <h1 class="class-name">CURATOR</h1>
+    <div class="class-type">INTELLIGENCE • STRENGTH • CRAFT</div>
+  </div>
+  <div class="description">Well-studied in the ways of healing magic from one of the many academies around the world. You go amongst the land, amongs the people, and most especially amongst the weak and injured. You heal. You strengthen. You give resolve to those that see no hope. You give them a reason to continue. You will do nothing ubt fight for the common good and well-being of the people of this world.</div>
+  <div class="section">
+    <h2 class="section-title">Starting Equipment</h2>
+    <div class="starting-equipment">
+      <div class="equipment-item">1 Starter Weapon</div>
+      <div class="equipment-item">1 Focus Tool</div>
+      <div class="equipment-item">Curator's Robes</div>
+      <div class="equipment-item">10 Rations</div>
+      <div class="equipment-item">Camp Supplies</div>
+      <div class="equipment-item">3 Minor Healing Potions</div>
+      <div class="equipment-item">10 Bandages</div>
+      <div class="equipment-item">Spellbook</div>
+      <div class="equipment-item">Ink &amp; Ink Pen</div>
+      <div class="equipment-item">2 Golden Coins</div>
+      <div class="equipment-item">Basic Crafting Supplies</div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="section-title">Class Traits</h2>
+    <div class="trait-grid">
+      <div class="trait">
+        <div class="trait-header">
+          <span class="trait-name">Healing Mantra</span> 
+          <span class="trait-type spell">SPELL</span>
+        </div>
+        <div class="trait-description">Curators' are taught healing magic very early into their academy years. They are separated from the Magi and given rigourous teaching to use everything, including their voice, to heal others.</div>
+        <div class="trait-effect">Gain Healing Voice spell with infinite casts.</div>
+      </div>
+      <div class="trait">
+        <div class="trait-header">
+          <span class="trait-name">Medical Crafting</span> 
+          <span class="trait-type advantage">ADVANTAGE</span>
+        </div>
+        <div class="trait-description">Curators are trained to produce medical devices or tools from items on hand or in the vicinity of an incident to provide medical care.</div>
+        <div class="trait-effect">Gain advantage to Craft checks.</div>
+      </div>
+      <div class="trait">
+        <div class="trait-header">
+          <span class="trait-name">Unimaginative</span> 
+          <span class="trait-type negative">NEGATIVE</span>
+        </div>
+        <div class="trait-description">Curators are not known for their artistry skills. In fact, they rarely have time to do any art with their constant practice of medicine and healing magic. 
+          <br>
+        </div>
+        <div class="trait-effect">Artistry loses 4 to modifier.</div>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="section-title">Stat Modifiers</h2>
+    <div class="stat-bonuses">
+      <div class="stat-box">
+        <div class="stat-name">Intelligence</div>
+        <div class="stat-value">+2</div>
+        <div style="margin-top: 10px; font-size: 0.9em;">Medical Knowledge</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-name">Strength</div>
+        <div class="stat-value">+2</div>
+        <div style="margin-top: 10px; font-size: 0.9em;">A Crafter's Back</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-name">Adaptability</div>
+        <div class="stat-value negative">-2</div>
+        <div style="margin-top: 10px; font-size: 0.9em;">Deficiency</div>
+      </div>
+    </div>
+  </div>
+  <div class="section progression">
+    <h2 class="section-title">Class Skill Progression</h2>
+    <div class="level-entry">
+      <div class="level-header">
+        <span class="level-number">Class Skill 0</span>
+      </div>
+      <div class="level-content">
+        <div class="gains">
+          <div class="gains-title">Gains</div>
+          <ul>
+            <li>Gain 2 Curator spells to your spell book at Class Skill 0</li>
+            <li>Gain Basic Medicraft ability</li>
+            <li>Gain +1 to Strength</li>
+            <li>All spells have 2 casts</li>
+          </ul>
+        </div>
+        <div class="requirements">
+          <div class="requirements-title">Ascension Requirements</div>
+          <ul>
+            <li>Character Level 1 Required</li>
+            <li>Class Skill 0 spell 2 times</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="level-entry">
+      <div class="level-header">
+        <span class="level-number">Class Skil 1</span>
+      </div>
+      <div class="level-content">
+        <div class="gains">
+          <div class="gains-title">Gains</div>
+          <ul>
+            <li>Gain 2 Curator spells at Class Skill 0</li>
+            <li>Gain 2 Curator spells at Class Skill 1</li>
+            <li>Gain 1 Curator ability</li>
+            <li>All spells have 2 casts</li>
+          </ul>
+        </div>
+        <div class="requirements">
+          <div class="requirements-title">Ascension Requirements</div>
+          <ul>
+            <li>Character Level 2 Required</li>
+            <li>Class Skill 0 spells 6 times</li>
+            <li>Class Skill 1 spells 6 times</li>
+            <li>Use Basic Medicraft ability 4 times</li>
+            <li>Use any ability charge 4 times</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="level-entry">
+      <div class="level-header">
+        <span class="level-number">Class Skill 2</span>
+      </div>
+      <div class="level-content">
+        <div class="gains">
+          <div class="gains-title">Gains</div>
+          <ul>
+            <li>Gain 2 Curator spells below Class Skill 2</li>
+            <li>Gain 2 Curator spells at Class Skill 2</li>
+            <li>Gain +1 to Intelligence</li>
+            <li>All spells have 3 casts</li>
+          </ul>
+        </div>
+        <div class="requirements">
+          <div class="requirements-title">Ascension Requirements</div>
+          <ul>
+            <li>Character Level 4 Required</li>
+            <li>Class Skill 1 spells 6 times</li>
+            <li>Class Skill 2 spells 6 times</li>
+            <li>Use Basic Medicraft ability 8 times</li>
+            <li>Use any ability charge 8 times</li>
+            <li>OR: Use your skills 8 times</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="level-entry">
+      <div class="level-header">
+        <span class="level-number">Class Skill 3</span>
+      </div>
+      <div class="level-content">
+        <div class="gains">
+          <div class="gains-title">Gains</div>
+          <ul>
+            <li>Gain 2 Curator spells below Class Skill 2</li>
+            <li>Gain 2 Curator spells below Class Skill 3</li>
+            <li>Gain 2 Curator spells at Class Skill 3</li>
+            <li>Gain Intermediate Medicraft ability</li>
+            <li>Gain 1 Curator ability</li>
+            <li>All spells have 3 casts</li>
+          </ul>
+        </div>
+        <div class="requirements">
+          <div class="requirements-title">Ascension Requirements</div>
+          <ul>
+            <li>Character Level 6 Required</li>
+            <li>Class Skill 1 spells 8 times</li>
+            <li>Class Skill 2 spells 8 times</li>
+            <li>Class Skill 3 spells 8 times</li>
+            <li>Cast Intermediate Medicraft 4 times</li>
+            <li>Use any ability charge 4 times</li>
+            <li>OR: Use skills 8 times (excludes Craft)</li>
+            <li>OR: Use Craft skill 8 times</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="level-entry">
+      <div class="level-header">
+        <span class="level-number">Class Skill 4</span>
+      </div>
+      <div class="level-content">
+        <div class="gains">
+          <div class="gains-title">Gains</div>
+          <ul>
+            <li>Gain 2 Curator spells below Class Skill 4</li>
+            <li>Gain 2 Curator spells at Class Skill 4</li>
+            <li>Gain +1 to Strength</li>
+            <li>All spells have 4 casts</li>
+          </ul>
+        </div>
+        <div class="requirements">
+          <div class="requirements-title">Ascension Requirements</div>
+          <ul>
+            <li>Character Level 8 Required</li>
+            <li>Class Skill 3 spells 12 times</li>
+            <li>Class Skill 4 spells 12 times</li>
+            <li>Cast Intermediate Medicraft ability 6 times</li>
+            <li>Use any ability charge 6 times</li>
+            <li>OR: Use skills 10 times (excludes Craft)</li>
+            <li>OR: Use Craft skill 10 times</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="level-entry">
+      <div class="level-header">
+        <span class="level-number">Class Skill 5</span>
+      </div>
+      <div class="level-content">
+        <div class="gains">
+          <div class="gains-title">Gains</div>
+          <ul>
+            <li>Gain 2 Curator spells below Class Skill 5</li>
+            <li>Gain 2 Curator spells at Class Skill 5</li>
+            <li>Gain 1 Curator ability</li>
+            <li>All spells have 4 casts</li>
+          </ul>
+        </div>
+        <div class="requirements">
+          <div class="requirements-title">Ascension Requirements</div>
+          <ul>
+            <li>Character Level 10 Required</li>
+            <li>Class Skill 3 spells 6 times</li>
+            <li>Class Skill 4 spells 10 times</li>
+            <li>Class Skill 5 spells 14 times</li>
+            <li>Cast Intermediate Medicraft ability 6 times</li>
+            <li>Use any ability charge 6 times</li>
+            <li>OR: Use skills 12 times (excludes Craft)</li>
+            <li>OR: Use Craft skill 12 times</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="level-entry">
+      <div class="level-header">
+        <span class="level-number">Class Skill 6</span>
+      </div>
+      <div class="level-content">
+        <div class="gains">
+          <div class="gains-title">Gains</div>
+          <ul>
+            <li>Gain 1 Curator spell below Class Skill 6</li>
+            <li>Gain 2 Curator spells at Class Skill 6</li>
+            <li>Gain Advanced Medicraft ability</li>
+            <li>Gain +1 to Intelligence</li>
+            <li>All spells at or below Class Skill 5 have 4 casts</li>
+            <li>All spells at or above Class Skill 6 have 1 cast</li>
+          </ul>
+        </div>
+        <div class="requirements">
+          <div class="requirements-title">Ascension Requirements</div>
+          <ul>
+            <li>Character Level 12 Required</li>
+            <li>Class Skill 5 or below spells 40 times</li>
+            <li>Class Skill 6 spells 10 times</li>
+            <li>Cast Advanced Medicraft ability 7 times</li>
+            <li>Use any ability charge 7 times</li>
+            <li>OR: Use skills 14 times (excludes Craft)</li>
+            <li>OR: Use Craft skill 14 times</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="level-entry">
+      <div class="level-header">
+        <span class="level-number">Class Skill 7</span>
+      </div>
+      <div class="level-content">
+        <div class="gains">
+          <div class="gains-title">Gains</div>
+          <ul>
+            <li>Gain 1 Curator spell below Class Skill 7</li>
+            <li>Gain 2 Curator spells at Class Skill 7</li>
+            <li>Gain 1 Curator ability</li>
+            <li>All spells at or below Class Skill 5 have 5 casts</li>
+            <li>All spells at or above Class Skill 6 have 1 cast</li>
+          </ul>
+        </div>
+        <div class="requirements">
+          <div class="requirements-title">Ascension Requirements</div>
+          <ul>
+            <li>Character Level 15 Required</li>
+            <li>Class Skill 6 or below spells 44 times</li>
+            <li>Class Skill 7 spells 10 times</li>
+            <li>Cast Advanced Medicraft ability 11 times</li>
+            <li>Use any ability charge 11 times</li>
+            <li>OR: Use skills 16 times (excludes Craft)</li>
+            <li>OR: Use Craft skill 16 times</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="level-entry">
+      <div class="level-header">
+        <span class="level-number">Class Skill 8</span>
+      </div>
+      <div class="level-content">
+        <div class="gains">
+          <div class="gains-title">Gains</div>
+          <ul>
+            <li>Gain 1 Curator spell below Class Skill 8</li>
+            <li>Gain 2 Curator spells at Class Skill 8</li>
+            <li>Gain +1 to Strength</li>
+            <li>All spells at or below Class Skill 5 have 5 casts</li>
+            <li>All spells at or above Class Skill 6 have 2 casts</li>
+          </ul>
+        </div>
+        <div class="requirements">
+          <div class="requirements-title">Ascension Requirements</div>
+          <ul>
+            <li>Character Level 17 Required</li>
+            <li>Class Skill 7 or below spells 40 times</li>
+            <li>Class Skill 8 spells 20 times</li>
+            <li>Cast BAdvance Medicraft ability 8 times</li>
+            <li>Use any ability charge 8 times</li>
+            <li>Use Craft skill 16 times</li>
+            <li>OR: Use skills 16 times (excludes Craft)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="level-entry">
+      <div class="level-header">
+        <span class="level-number">Class Skill 9</span>
+      </div>
+      <div class="level-content">
+        <div class="gains">
+          <div class="gains-title">Gains</div>
+          <ul>
+            <li>Gain 1 Curator spell below Class Skill 9</li>
+            <li>Gain 2 Curator spells at Class Skill 9</li>
+            <li>Gain Expert Medicraft ability</li>
+            <li>Gain 1 Caster ability</li>
+            <li>All spells at or below Class Skill 5 have 6 casts</li>
+            <li>All spells at or above Class Skill 6 have 2 casts</li>
+          </ul>
+        </div>
+        <div class="requirements">
+          <div class="requirements-title">Ascension Requirements</div>
+          <ul>
+            <li>Character Level 20 Required</li>
+            <li>Class Skill 8 or below spells 40 times</li>
+            <li>Class Skill 9 spells 20 times</li>
+            <li>Cast Expert Medicraft ability 10 times</li>
+            <li>Use any ability charge 10 times</li>
+            <li>Use Craft skill 20 times</li>
+            <li>Use skills 20 times (excludes Craft)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="level-entry">
+      <div class="level-header">
+        <span class="level-number">Class Skill 10</span>
+      </div>
+      <div class="level-content">
+        <div class="gains">
+          <div class="gains-title">Gains</div>
+          <ul>
+            <li>Gain 1 Curator spell below Class Skill 10</li>
+            <li>Gain 1 Curator spell at Class Skill 10</li>
+            <li>Gain 1 Legendary ability</li>
+            <li>Gain +1 to Intelligence</li>
+            <li>All spells at or below Class Skill 5 have 6 casts</li>
+            <li>All spells between Class Skill 6 and 9 have 3 casts</li>
+            <li>Class Skill 10 spell has 1 cast</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
